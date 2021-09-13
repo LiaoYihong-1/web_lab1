@@ -20,7 +20,7 @@
             alert("Make sure that you enter a number for y");
             return false;
         }
-        if(Number(value)>-5 && Number(value)<3){
+        if(parseInt(value) < 3 && parseInt(value) > -5){
             let checkR = false;
             for(let i = 0; i< R.length; i++){
                 if(R.item(i).checked === true){
@@ -67,7 +67,8 @@
                     when state changed, this function will be called
                 */
                 if(request.readyState === 4 && request.status === 200) {
-                    document.getElementById("result").innerHTML = request.responseText;
+                    let origin =document.getElementById("result").innerHTML;
+                    document.getElementById("result").innerHTML = origin+request.responseText;
                 }
             };
         }
@@ -84,8 +85,8 @@
     Lab 1
 </h2>
 <form id = "form1" method = "post"  >
-    <!--first choose(can more than one)-->
     <div class = "wrapper">
+        <!--first choose(can more than one)-->
         <div class = "choice1">
             <p>
                 Please choose value of R<span class = "required">*</span>:<br>

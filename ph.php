@@ -39,6 +39,7 @@ class Checker
     var $x;
     var $y;
     var $R;
+    var $suit;
 
     function __construct($x,$y,$R){
         $this->R = $R;
@@ -52,15 +53,12 @@ class Checker
 
     function check()
     {
-        if ((($this->x <= 0 && $this->x > -$this->R) && ($this->y <= $this->R && $this->y >= (-$this->x / 2 - $this->R / 2)))){
-            if( (($this->x > 0 && $this->x < $this->R) && ((pow($this->x, 2) + pow($this->y, 2)) <= pow($this->R, 2)))) {
-                return true;
-            }else{
-                return false;
-            }
-        } else {
-            return false;
+        if($this->x <=0 && $this ->x >= -$this->R && $this->y <= $this->R && $this->y >= -($this->R+$this->x)/2){
+            return true;
+        }else if( ($this->x > 0) && pow($this->R,2) > (pow($this->x,2)+pow($this->y,2)) ){
+            return true;
         }
+        return false;
     }
 }
 
@@ -68,35 +66,39 @@ $x = $y ="";
 $R = array();
 $formatter = new StringFormatter;
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if($_SERVER["REQUEST_METHOD"] == "POST") {
     $x = $_POST["x"];
     $y = $_POST["y"];
     $R = $_POST["R"];
-    $checker = new Checker($x,$y,$R);
-    $table = "<table border='1'>";
-    $table.="<tr>";
-    $table.="<td>x</td>";
-    $table.="<td>y</td>";
-    $table.="<td>R</td>";
-    $table.="<td>Result</td>";
-    $table.="</tr>";
+    if (intval($y) >= 3 || intval($y) <= -5) {
+        echo "Another data check on Server!";
+    } else {
+        $checker = new Checker($x, $y, 1);
+        $table = "<table border='1'>";
+        $table .= "<tr>";
+        $table .= "<td>x</td>";
+        $table .= "<td>y</td>";
+        $table .= "<td>R</td>";
+        $table .= "<td>Result</td>";
+        $table .= "</tr>";
 
-    for($i = 0; $i < count($R); ($i++)) {
-        $checker->setR($R[$i]);
-        $table.="<tr>";
-        $table.="<td>$x</td>";
-        $table.="<td>$y</td>";
-        $table.="<td>$R[$i]</td>";
-        if($checker->check()){
-            $table.="<td>Coordinate in range</td>";
-        }else{
-            $table.="<td>Coordinate out of range</td>";
+        for ($i = 0; $i < count($R); ($i++)) {
+            $checker->setR($R[$i]);
+            $table .= "<tr>";
+            $table .= "<td>$x</td>";
+            $table .= "<td>$y</td>";
+            $table .= "<td>$R[$i]</td>";
+            if ($checker->check()) {
+                $table .= "<td>Coordinate in range</td>";
+            } else {
+                $table .= "<td>Coordinate out of range</td>";
+            }
+            $table .= "</tr>";
         }
-        $table.="</tr>";
+        echo "<br>";
+        echo $table;
+        echo date("Y - M - d, H : i");
+        echo "<br>";
+        echo "This script run " . $formatter->format((microtime(true) - $t1)) . "s";
     }
-    echo $table;
-    echo date("Y - M - d, H : i");
-    echo "<br>";
-    echo "This script run " . $formatter->format((microtime(true) - $t1))."s";
 }
-
